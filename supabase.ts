@@ -1,4 +1,4 @@
-import { createClient, type Json } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
 // --- TYPE DEFINITIONS ---
 export interface TraitDefinition {
@@ -29,17 +29,17 @@ export interface Database {
       app_storage: {
         Row: {
           id: number;
-          data: Json | null;
+          data: AppData | null;
           updated_at: string | null;
         };
         Insert: {
           id: number;
-          data?: Json | null;
+          data?: AppData | null;
           updated_at?: string | null;
         };
         Update: {
           id?: number;
-          data?: Json | null;
+          data?: AppData | null;
           updated_at?: string | null;
         };
         Relationships: [];
