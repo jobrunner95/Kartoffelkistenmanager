@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kartoffelkisten-Manager</title>
+    
+    <!-- PWA & iOS specific tags -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#583e2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KistenManager">
+    
+    <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^18.2.0/",
+    "react": "https://esm.sh/react@^18.2.0",
+    "react/": "https://esm.sh/react@^18.2.0/",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
