@@ -1072,7 +1072,7 @@ const App = () => {
 
         // Case 2: Data exists, load it
         if (data?.data) {
-          setAppData(data.data);
+          setAppData(data.data as AppData);
         } else {
           // Case 3: No data found (first run), initialize with default and save it
           console.log("No data found in Supabase, initializing with default data.");
@@ -1118,7 +1118,7 @@ const App = () => {
           console.log('Real-time change received!', payload);
           // Avoid overwriting local state if we are the ones who just saved
           if (!isInitialMount.current) {
-              setAppData(payload.new.data);
+              setAppData(payload.new.data as AppData | null);
           }
         }
       )
