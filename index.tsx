@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
+import { GoogleGenAI } from "@google/genai";
 import { supabase, type AppData, type BoxData, type TraitDefinition } from './supabase';
 
 const TOTAL_BOXES = 150;
@@ -941,6 +942,45 @@ const getFillLevelWeight = (fillLevel: string | undefined): number => {
     }
 };
 
+const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
+    // Replace * with bullet points and split by new lines
+    const lines = content.split('\n').map((line, index) => {
+        line = line.trim();
+        if (line.startsWith('* ')) {
+            return <li key={index}>{line.substring(2)}</li>;
+        }
+        if (line) {
+            return <p key={index}>{line}</p>;
+        }
+        return null;
+    });
+
+    // Group consecutive list items into a single <ul>
+    const renderedContent: React.ReactNode[] = [];
+    let listItems: React.ReactNode[] = [];
+
+    lines.forEach((line, index) => {
+        if (line && line.type === 'li') {
+            listItems.push(line);
+        } else {
+            if (listItems.length > 0) {
+                renderedContent.push(<ul key={`ul-${index}`}>{listItems}</ul>);
+                listItems = [];
+            }
+            if (line) {
+                renderedContent.push(line);
+            }
+        }
+    });
+
+    if (listItems.length > 0) {
+        renderedContent.push(<ul key="ul-last">{listItems}</ul>);
+    }
+
+    return <div className="markdown-content">{renderedContent}</div>;
+};
+
+
 const SummaryScreen: React.FC<SummaryScreenProps> = ({ boxes, onBack }) => {
   const summaryData = useMemo(() => {
     type SortingDetail = {
@@ -992,12 +1032,86 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({ boxes, onBack }) => {
     return { summary: data, sortedVarieties, emptyBoxes };
   }, [boxes]);
 
+  const [insight, setInsight] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+
+  const handleGenerateInsight = async () => {
+    setIsGenerating(true);
+    setGenerationError(null);
+    setInsight(null);
+
+    try {
+      const ai = new GoogleGenAI({apiKey: process.env.API_KEY!});
+
+      const dataForPrompt = {
+        leereKisten: summaryData.emptyBoxes,
+        sorten: summaryData.sortedVarieties.map(varietyName => ({
+          name: varietyName,
+          gesamt: summaryData.summary[varietyName].weightedTotal,
+          sortierungen: Object.keys(summaryData.summary[varietyName].sortings).map(sortingName => ({
+            name: sortingName,
+            menge: summaryData.summary[varietyName].sortings[sortingName].weightedTotal,
+          }))
+        }))
+      };
+      
+      const prompt = `
+        Basierend auf den folgenden Bestandsdaten für Kartoffelkisten, gib mir als Landwirtschafts-Experte einige kurze, umsetzbare Einblicke.
+        Konzentriere dich auf 2-3 wichtige Punkte. Zum Beispiel: Welche Sorte ist am häufigsten vorhanden? Gibt es potenzielle Engpässe? Welche Sortierung dominiert?
+        Antworte auf Deutsch in einem freundlichen und prägnanten Ton. Formatiere deine Antwort mit Absätzen und Stichpunkten (mit *), aber ohne Markdown-Überschriften.
+
+        Daten:
+        ${JSON.stringify(dataForPrompt, null, 2)}
+      `;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+      });
+      
+      setInsight(response.text);
+
+    } catch (e: any) {
+      console.error("Error generating insight:", e);
+      setGenerationError("Ein Fehler ist beim Generieren der Einblicke aufgetreten. Bitte versuchen Sie es später erneut.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+
   return (
     <div className="summary-screen">
        <div className="summary-header">
           <h2>Bestandsübersicht</h2>
           <button className="btn btn-secondary" onClick={onBack}>Zurück zum Dashboard</button>
       </div>
+
+      <div className="ai-insight-section">
+        {!insight && !isGenerating && !generationError && (
+          <button className="btn btn-primary" onClick={handleGenerateInsight} disabled={isGenerating}>
+            KI-Einblicke erhalten
+          </button>
+        )}
+        {isGenerating && (
+          <div className="loading-inline">
+            <div className="spinner-small"></div>
+            <span>Einblicke werden generiert...</span>
+          </div>
+        )}
+        {generationError && <p className="error-text">{generationError}</p>}
+        {insight && (
+          <div className="ai-insight-card">
+            <h4>KI-Analyse</h4>
+            <MarkdownRenderer content={insight} />
+            <button className="btn btn-secondary btn-small" onClick={handleGenerateInsight} disabled={isGenerating}>
+              {isGenerating ? 'Wird neu generiert...' : 'Erneut generieren'}
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="summary-grid">
         <div className="summary-card">
           <h3>Leere Kisten</h3>
