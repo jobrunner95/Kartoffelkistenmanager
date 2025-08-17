@@ -1090,16 +1090,9 @@ const App = () => {
         setError(
           `Die Anwendung konnte keine Verbindung zur Datenbank herstellen.\n\n` +
           `Fehlermeldung: ${e.message}\n\n` +
-          `Mögliche Ursache: Die Datenbanktabelle wurde nicht erstellt.\n` +
-          `Bitte führen Sie das folgende SQL-Skript im "SQL Editor" Ihres Supabase-Projekts aus:\n\n` +
-          `-- Erstellt die Tabelle zum Speichern der App-Daten\n` +
-          `create table app_storage (\n` +
-          `  id int primary key,\n` +
-          `  data jsonb,\n` +
-          `  updated_at timestamptz default now()\n` +
-          `);\n\n` +
-          `-- Aktiviert Echtzeit-Updates für diese Tabelle\n` +
-          `alter publication supabase_realtime add table app_storage;`
+          `Mögliche Ursache: Die Datenbanktabelle wurde nicht erstellt oder die CORS-Einstellungen sind falsch.\n` +
+          `1. Führen Sie das SQL-Skript im "SQL Editor" Ihres Supabase-Projekts aus.\n` +
+          `2. Gehen Sie zu "Authentication" -> "URL Configuration" und fügen Sie Ihre Render/Netlify-URL hinzu.`
         );
       } finally {
         setIsLoading(false);
