@@ -1042,7 +1042,7 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({ boxes, onBack }) => {
     setInsight(null);
 
     try {
-      const ai = new GoogleGenAI({apiKey: process.env.API_KEY});
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
       const dataForPrompt = {
         leereKisten: summaryData.emptyBoxes,
@@ -1074,7 +1074,7 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({ boxes, onBack }) => {
 
     } catch (e: any) {
       console.error("Error generating insight:", e);
-      setGenerationError("Ein Fehler ist beim Generieren der Einblicke aufgetreten. Bitte versuchen Sie es später erneut.");
+      setGenerationError("Ein Fehler ist beim Generieren der Einblicke aufgetreten. Bitte stellen Sie sicher, dass Ihr API-Schlüssel korrekt konfiguriert ist und versuchen Sie es später erneut.");
     } finally {
       setIsGenerating(false);
     }
