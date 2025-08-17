@@ -1042,7 +1042,7 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({ boxes, onBack }) => {
     setInsight(null);
 
     try {
-      const ai = new GoogleGenAI({apiKey: process.env.API_KEY!});
+      const ai = new GoogleGenAI({apiKey: process.env.API_KEY});
 
       const dataForPrompt = {
         leereKisten: summaryData.emptyBoxes,
