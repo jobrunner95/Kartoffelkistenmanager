@@ -29,17 +29,17 @@ export interface Database {
       app_storage: {
         Row: {
           id: number;
-          data: AppData | null;
+          data: any;
           updated_at: string | null;
         };
         Insert: {
           id: number;
-          data?: AppData | null;
+          data?: any;
           updated_at?: string | null;
         };
         Update: {
           id?: number;
-          data?: AppData | null;
+          data?: any;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -60,7 +60,11 @@ export interface Database {
   };
 }
 
-const supabaseUrl = 'https://wwiwuxmnholpzzghgcgk.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3aXd1eG1uaG9scHp6Z2hnY2drIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4NDU3MzksImV4cCI6MjA3MDQyMTczOX0.7TL-HZc8GlSO_d7P1eu9ZsXExiXMJtmLyDcySLJuPUA';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Supabase URL und Anon Key sind nicht konfiguriert. Bitte setzen Sie die VITE_SUPABASE_URL und VITE_SUPABASE_ANON_KEY Umgebungsvariablen.");
+}
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);

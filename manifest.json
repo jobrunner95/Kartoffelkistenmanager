@@ -4,7 +4,7 @@
   "description": "Eine Anwendung zur visuellen Verfolgung und Verwaltung des Inhalts von 150 Kartoffelkisten.",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#f7f6f2",
+  "background_color": "#121212",
   "theme_color": "#583e2e",
   "icons": [
     {
