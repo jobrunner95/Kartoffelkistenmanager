@@ -12,7 +12,7 @@ export interface BoxData {
   sorting?: string;
   date?: string; // YYYY-MM-DD
   fillLevel?: string;
-  customTraits?: Record<string, string>;
+  customTraits?: { [traitName: string]: string };
 }
 
 export interface AppData {
@@ -29,17 +29,17 @@ export interface Database {
       app_storage: {
         Row: {
           id: number;
-          data: any;
+          data: AppData | null;
           updated_at: string | null;
         };
         Insert: {
           id: number;
-          data?: any;
+          data?: AppData | null;
           updated_at?: string | null;
         };
         Update: {
           id?: number;
-          data?: any;
+          data?: AppData | null;
           updated_at?: string | null;
         };
         Relationships: [];
